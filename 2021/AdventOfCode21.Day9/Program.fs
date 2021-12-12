@@ -1,4 +1,4 @@
-﻿// https://adventofcode.com/2021/day/8
+﻿// https://adventofcode.com/2021/day/9
 
 open System;
 
@@ -123,7 +123,7 @@ let findNeighborPos (x, y) =
 let calcBasinSize (x, y) =
     let visitedPos = Set.singleton (x, y)
 
-    let rec recVisist visitedCells =
+    let rec recVisit visitedCells =
         let neighborPos = 
             visitedCells 
             // use visited to expand neighbors (lots of double will be filtered out later)
@@ -135,9 +135,9 @@ let calcBasinSize (x, y) =
 
         match remainingPos with
         | e when e.IsEmpty -> visitedCells
-        | p -> recVisist (Set.union visitedCells p)
+        | p -> recVisit (Set.union visitedCells p)
 
-    recVisist visitedPos
+    recVisit visitedPos
     |> Set.toList
     |> List.length
 
@@ -145,7 +145,7 @@ let topThreeBasinSizeProduct =
     lowPoints
     |> Seq.map calcBasinSize
     |> Seq.sortDescending
-    |> Seq. take 3
+    |> Seq.take 3
     |> Seq.reduce (*)
 
-printfn "2) Product %d" topThreeBasinSizeProduct
+printfn "2) Product %d" topThreeBasinSizeProduct        // 902880
