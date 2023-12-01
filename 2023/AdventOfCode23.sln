@@ -7,6 +7,8 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "AdventOfCode23.Day00", "Adv
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "AdventOfCode23.Day01", "AdventOfCode23.Day01\AdventOfCode23.Day01.fsproj", "{E20DAC4C-870D-4920-B5BF-A0C7248CFAAC}"
 EndProject
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "AdventOfCode23.Day02", "AdventOfCode23.Day02\AdventOfCode23.Day02.fsproj", "{12BE7FBA-A0D6-449C-9749-ACBD04435A02}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{E20DAC4C-870D-4920-B5BF-A0C7248CFAAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E20DAC4C-870D-4920-B5BF-A0C7248CFAAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E20DAC4C-870D-4920-B5BF-A0C7248CFAAC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{12BE7FBA-A0D6-449C-9749-ACBD04435A02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12BE7FBA-A0D6-449C-9749-ACBD04435A02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12BE7FBA-A0D6-449C-9749-ACBD04435A02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12BE7FBA-A0D6-449C-9749-ACBD04435A02}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
