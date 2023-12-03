@@ -64,10 +64,6 @@ let schemaLines =
 
 let symbolRowIndex = 1
 
-let passThroughPrint x =
-  printf "%A" x
-  x
-
 let adjacentSpan span index =
   let (start, stop) = span
   // same row as symbol so has to 'connect'
@@ -81,7 +77,6 @@ let intersectSpan span index =
 let intersectPartNumbers symbolIndex lineIndex partnumbers =
   partnumbers
   |> Array.filter (fun no -> if lineIndex = symbolRowIndex then adjacentSpan no.Span symbolIndex else intersectSpan no.Span symbolIndex)
-  |> Array.map (fun no -> no)
 
 let adjacentPartNumbers index threeLines =
   threeLines
@@ -104,4 +99,26 @@ let partNumbers =
 //printf "%A" partNumbers
 
 let sum = partNumbers |> Array.sum
-printf "%A" sum
+printf "Part Number Sum: %A" sum
+
+// --------------------------------------------------------
+// part 2
+
+let gearSymbol = '*'
+
+let gearAdjacentPartNumbers (threeLines: SchemaLine array) =
+  threeLines.[symbolRowIndex].Symbols
+  |> Array.filter (fun s -> s.Symbol = gearSymbol)
+  |> Array.map (fun s -> adjacentPartNumbers s.Index threeLines)
+  |> Array.filter (fun r -> r.Length = 2)
+  |> Array.map(fun no -> no.[0] * no.[1])
+
+let gearRatios = 
+  schemaLines 
+  |> Array.windowed 3 
+  |> Array.map gearAdjacentPartNumbers
+  |> Array.collect (fun l -> l)
+
+let gearSum = gearRatios |> Array.sum
+printf "Gear Ratio Sum: %A" gearSum
+  
