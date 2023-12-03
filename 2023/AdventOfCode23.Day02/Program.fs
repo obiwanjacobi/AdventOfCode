@@ -12,28 +12,22 @@ type Game =
 
 let getColorScore (line: string) =
   let parts = line.Trim().Split(' ')
-  parts[1].Trim(), System.Int32.Parse(parts[0])
+  parts[1].Trim(), parts[0] |> int
+
+let filterColorScore colorName scores =
+  let colorScores = scores |> Array.filter (fun (name, score) -> name = colorName)
+  match colorScores with
+  | [| (name, score) |] -> score
+  | _ -> 0
 
 let getGameScore (line: string) = 
-  let parts = line.Trim().Split(',')
-  let colorScores = parts |> Array.map (fun cs -> getColorScore cs)
+  let colorScores = 
+    line.Trim().Split(',')
+    |> Array.map (fun cs -> getColorScore cs)  
   
-  let reds = colorScores |> Array.filter (fun (name, score) -> name = "red")
-  let greens = colorScores |> Array.filter (fun (name, score) -> name = "green")
-  let blues = colorScores |> Array.filter (fun (name, score) -> name = "blue")
-  
-  let red = 
-    match reds with
-    | [| (name, score) |] -> score
-    | _ -> 0
-  let green = 
-      match greens with
-      | [| (name, score) |] -> score
-      | _ -> 0
-  let blue = 
-      match blues with
-      | [| (name, score) |] -> score
-      | _ -> 0
+  let red = colorScores |> filterColorScore "red"
+  let green = colorScores |> filterColorScore "green"
+  let blue = colorScores |> filterColorScore "blue"
 
   { Red = red; Green = green; Blue = blue; }
 
@@ -43,7 +37,7 @@ let getGameScores (line: string) =
 
 let getGame (line: string) =
   let parts = line.Trim().Split(':')
-  { Id = System.Int32.Parse(parts.[0][5..]); Scores = getGameScores parts[1]; }
+  { Id = parts.[0][5..] |> int; Scores = getGameScores parts[1]; }
 
 // --------------------------------------------------------
 // part1
