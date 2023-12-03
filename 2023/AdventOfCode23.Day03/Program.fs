@@ -77,8 +77,8 @@ let intersectSpan span index =
   // extra margin (+/- 1) for diagonal match
   index >= start - 1 && index <= stop + 1
 
-let intersectPartNumbers symbolIndex lineIndex partnumbers =
-  partnumbers
+let intersectPartNumbers symbolIndex lineIndex partNumbers =
+  partNumbers
   |> Array.filter (fun no ->
     if lineIndex = symbolRowIndex then
       adjacentSpan no.Span symbolIndex
