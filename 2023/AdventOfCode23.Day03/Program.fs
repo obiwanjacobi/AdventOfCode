@@ -62,6 +62,9 @@ let schemaLines =
 // --------------------------------------------------------
 // part 1
 
+// note that the first and last line are not processed for 'adjacentSpan'
+// still the answer is correct
+
 let symbolRowIndex = 1
 
 let adjacentSpan span index =
@@ -81,25 +84,22 @@ let intersectPartNumbers symbolIndex lineIndex partnumbers =
 let adjacentPartNumbers index threeLines =
   threeLines
   |> Array.indexed
-  |> Array.map (fun (i, l) -> l.PartNumbers |> intersectPartNumbers index i)
-  |> Array.collect (fun l -> l)
+  |> Array.collect (fun (i, l) -> l.PartNumbers |> intersectPartNumbers index i)
   |> Array.map (fun no -> no.Number)
 
 let symbolAdjacentPartNumbers (threeLines: SchemaLine array) =
   threeLines.[symbolRowIndex].Symbols 
-  |> Array.map (fun s -> adjacentPartNumbers s.Index threeLines)
-  |> Array.collect (fun no -> no)
+  |> Array.collect (fun s -> adjacentPartNumbers s.Index threeLines)
   
 let partNumbers = 
   schemaLines 
   |> Array.windowed 3 
-  |> Array.map symbolAdjacentPartNumbers
-  |> Array.collect (fun l -> l)
+  |> Array.collect symbolAdjacentPartNumbers
 
 //printf "%A" partNumbers
 
 let sum = partNumbers |> Array.sum
-printf "Part Number Sum: %A" sum
+printf "Part Number Sum: %A\r\n" sum
 
 // --------------------------------------------------------
 // part 2
@@ -116,9 +116,7 @@ let gearAdjacentPartNumbers (threeLines: SchemaLine array) =
 let gearRatios = 
   schemaLines 
   |> Array.windowed 3 
-  |> Array.map gearAdjacentPartNumbers
-  |> Array.collect (fun l -> l)
+  |> Array.collect gearAdjacentPartNumbers
 
 let gearSum = gearRatios |> Array.sum
-printf "Gear Ratio Sum: %A" gearSum
-  
+printf "Gear Ratio Sum: %A\r\n" gearSum
