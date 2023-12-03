@@ -1,12 +1,9 @@
 ﻿// https://adventofcode.com/2023/day/2
-// part1
 
-//let lines = System.IO.File.ReadLines "sample1.txt"
-//let lines = System.IO.File.ReadLines "sample2.txt"
+//let lines = System.IO.File.ReadLines "sample.txt"
 let lines = System.IO.File.ReadLines "input.txt"
-//lines |> Seq.iter(fun x -> printfn "%s" x)
-//let numberOfLines = lines |> Seq.length
-//printfn "Number of input lines: %d" numberOfLines
+
+// parsing input
 
 type GameScore =
   { Red: int; Green: int; Blue: int; }
@@ -48,7 +45,7 @@ let getGame (line: string) =
   let parts = line.Trim().Split(':')
   { Id = System.Int32.Parse(parts.[0][5..]); Scores = getGameScores parts[1]; }
 
-// ----------------------------------------------------------
+// --------------------------------------------------------
 // part1
 
 let games = 
@@ -70,7 +67,25 @@ let selectGameIds games score =
 
 let score = { Red = 12; Green = 13; Blue = 14; }
 
-let sum = selectGameIds games score
+let idSum = selectGameIds games score
 
-printf "Sum of all compatible game-id's: %d" sum
+printf "Sum of all compatible game-id's: %d\r\n" idSum
 
+// --------------------------------------------------------
+// part 2
+
+let determineMinimalScore gameScore minScore =
+  { Red = max gameScore.Red minScore.Red; Green = max gameScore.Green minScore.Green; Blue = max gameScore.Blue minScore.Blue; }
+
+let getMinimalScore game =
+  game.Scores |> Seq.reduce (fun a s -> determineMinimalScore s a)
+
+let scorePower score =
+  score.Red * score.Green * score.Blue
+
+let powerSum =
+  games
+  |> Seq.map (fun g -> g |> getMinimalScore |> scorePower)
+  |> Seq.sum
+
+printf "Sum of all minimal score powers: %d\r\n" powerSum

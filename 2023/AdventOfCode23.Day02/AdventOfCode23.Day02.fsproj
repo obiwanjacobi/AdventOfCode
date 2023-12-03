@@ -6,10 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="sample1.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="sample2.txt">
+    <Content Include="sample.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="input.txt">
