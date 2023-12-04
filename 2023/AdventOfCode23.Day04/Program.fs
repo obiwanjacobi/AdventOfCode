@@ -27,18 +27,50 @@ let parseCard (line: string) =
 let cards =
   lines |> Seq.map (fun l -> parseCard l)
 
+let countWinningNumbers card =
+  (card.Numbers |> Array.filter (fun n -> card.Winning |> Array.contains n)).Length
+  
 let winningNumberPoints card =
-  let winningNumbers = card.Numbers |> Array.filter (fun n -> card.Winning |> Array.contains n)
-  (2.0 ** winningNumbers.Length) / 2.0 |> int
+  ((2.0 ** countWinningNumbers card) |> int) / 2
 
 let winningNumbersSum =
   cards 
   |> Seq.map (fun c -> winningNumberPoints c)
   |> Seq.sum
 
-printf "Sum of Winning Number points: %A" winningNumbersSum
+printf "Sum of Winning Number points: %A\r\n" winningNumbersSum
 
 // --------------------------------------------------------
 // part2
 
+type CountedCard(c: Card) =
+  let mutable _instances = 1
+  
+  member this.Card = c
+  member this.Instances
+    with get() = _instances
+    and set(value) =  _instances <- value
 
+let countedCards = 
+  cards 
+  |> Array.ofSeq
+  |> Array.map (fun c -> new CountedCard(c))
+
+let collectCardInstancess cards (card: CountedCard) =
+  let winningCount = countWinningNumbers card.Card
+
+  cards 
+  |> Array.skipWhile (fun c -> c <> card)
+  |> Array.skip 1
+  |> Array.take winningCount
+  |> Array.iter (fun cc -> cc.Instances <- cc.Instances + card.Instances)
+
+let countWinningCards =
+  countedCards
+  |> Array.iter (fun cc -> collectCardInstancess countedCards cc)
+  
+  countedCards
+  |> Array.map (fun cc -> cc.Instances)
+  |> Array.sum
+
+printf "Total number of winning cards: %A\r\n" countWinningCards
