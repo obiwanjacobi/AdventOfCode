@@ -89,10 +89,6 @@ printf "Lowest location 1: %A\r\n" minLocation1
 // --------------------------------------------------------
 // part2
 
-// NOT CORRECT
-
-// I have no idea how to do this...
-
 let rec toRange list = 
   match list with
   | (x: int64)::(y: int64)::rest -> { Start = x; End = x + y}:: toRange rest
@@ -103,29 +99,36 @@ let seedsRanges =
   |> List.ofArray
   |> toRange
 
-printf "%A" seedsRanges
+//printf "%A" seedsRanges
 
-let intersectRange srcRng dstRng = 
-  srcRng.End >= dstRng.Start && srcRng.Start <= dstRng.End
+let intersectRange srcRng1 srcRng2 = 
+  srcRng1.End >= srcRng2.Start && srcRng1.Start < srcRng2.End
 
-let intersect srcRng map =
+let translateIntersect srcRng map =
   let entries = map.Entries |> List.filter (fun e -> intersectRange srcRng e.Source)
   if List.length entries = 0 then
-    srcRng  // unmapped values pass thru
+    [srcRng]  // unmapped values pass thru
   else
-    let entry = entries[0]
-    { Start = (max srcRng.Start entry.Source.Start); End = (min srcRng.End entry.Source.End) }
+    entries
+    |> List.map (fun e ->
+      let startRng = max srcRng.Start e.Source.Start 
+      let endRng = min srcRng.End e.Source.End
+      let startOffset = Math.Abs(e.Source.Start - startRng)
+      let endOffset = Math.Abs(e.Source.End - endRng)
+      { Start = e.Destination.Start + startOffset; End = e.Destination.End - endOffset }
+    )
+
 
 let rec intersectMap srcRng index maps =
   if index >= List.length maps then
-    srcRng
+    [srcRng]
   else
-    let dstRng = intersect srcRng maps.[index]
-    maps |> intersectMap dstRng (index + 1)
+    translateIntersect srcRng maps.[index]
+    |> List.collect (fun rng -> maps |> intersectMap rng (index + 1) )
 
 let minLocation2 =
   seedsRanges
-  |> List.map (fun r -> intersectMap r 0 maps)
+  |> List.collect (fun r -> intersectMap r 0 maps)
   |> List.minBy (fun r -> r.Start)
   
 printf "Lowest location 2: %A\r\n" minLocation2
