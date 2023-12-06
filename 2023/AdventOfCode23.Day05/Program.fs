@@ -1,8 +1,8 @@
 ﻿// https://adventofcode.com/2023/day/5
 open System
 
-//let lines = System.IO.File.ReadLines "sample.txt"
-let lines = System.IO.File.ReadLines "input.txt"
+let lines = System.IO.File.ReadLines "sample.txt"
+//let lines = System.IO.File.ReadLines "input.txt"
 
 // input parsing
 
@@ -78,10 +78,54 @@ let rec translateMap srcVal index maps =
     let dstVal = translate srcVal maps.[index]
     maps |> translateMap dstVal (index + 1)
 
-let minLocation =
+let minLocation1 =
   seeds
   |> List.ofArray
   |> List.map (fun s -> translateMap s 0 maps)
   |> List.min
 
-printf "Lowest location: %A\r\n" minLocation
+printf "Lowest location 1: %A\r\n" minLocation1
+
+// --------------------------------------------------------
+// part2
+
+// NOT CORRECT
+
+// I have no idea how to do this...
+
+let rec toRange list = 
+  match list with
+  | (x: int64)::(y: int64)::rest -> { Start = (min x y); End = (max x y)}:: toRange rest
+  | _ -> []
+
+let seedsRanges = 
+  seeds
+  |> List.ofArray
+  |> toRange
+
+printf "%A" seedsRanges
+
+let intersectRange srcRng dstRng = 
+  srcRng.End >= dstRng.Start && srcRng.Start <= dstRng.End
+
+let intersect srcRng map =
+  let entries = map.Entries |> List.filter (fun e -> intersectRange srcRng e.Source)
+  if List.length entries = 0 then
+    srcRng  // unmapped values pass thru
+  else
+    let entry = entries[0]
+    { Start = (max srcRng.Start entry.Source.Start); End = (min srcRng.End entry.Source.End) }
+
+let rec intersectMap srcRng index maps =
+  if index >= List.length maps then
+    srcRng
+  else
+    let dstRng = intersect srcRng maps.[index]
+    maps |> intersectMap dstRng (index + 1)
+
+let minLocation2 =
+  seedsRanges
+  |> List.map (fun r -> intersectMap r 0 maps)
+  |> List.minBy (fun r -> r.Start)
+  
+printf "Lowest location 2: %A\r\n" minLocation2
