@@ -95,7 +95,7 @@ printf "Lowest location 1: %A\r\n" minLocation1
 
 let rec toRange list = 
   match list with
-  | (x: int64)::(y: int64)::rest -> { Start = (min x y); End = (max x y)}:: toRange rest
+  | (x: int64)::(y: int64)::rest -> { Start = x; End = x + y}:: toRange rest
   | _ -> []
 
 let seedsRanges = 
