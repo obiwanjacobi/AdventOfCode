@@ -9,7 +9,7 @@ let lines = System.IO.File.ReadLines "sample.txt"
 type Range =
   { Start: int64; End: int64; }
 type MapEntry =
-  { Source: Range; Destination: Range; }
+  { Source: Range; Destination: Range; Delta: int64 }
 type Map =
   { Name: string; Entries: MapEntry list; }
 
@@ -27,7 +27,7 @@ let rec parseMapEntry index (entries: MapEntry list) (lines: string list) =
 
       let srcRange = { Start = parts.[1]; End = parts.[1] + parts.[2] }
       let destRange = { Start = parts.[0]; End = parts.[0] + parts.[2] }
-      let entry = { Source = srcRange; Destination = destRange; }
+      let entry = { Source = srcRange; Destination = destRange; Delta = (destRange.Start - srcRange.Start) }
       
       lines |> parseMapEntry (index + 1) (entries |> List.append (List.singleton entry))
 
