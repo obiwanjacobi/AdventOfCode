@@ -61,4 +61,45 @@ let expandSum =
   |> List.map (fun d -> expand d 0)
   |> List.sum
 
-printf "%A" expandSum
+printf "Expand Sum 1: %A\r\n" expandSum
+
+// --------------------------------------------------------
+// part2
+
+// just copied the code from 1
+// could not be bothered to refactor into one codebase
+
+let rec calcDeltas2 sequence deltas =
+  if seqIsAllZero sequence then
+    deltas
+  else
+    let seqDelta = 
+      sequence
+      |> List.pairwise 
+      |> List.map (fun (n1, n2) -> n2 - n1)
+
+    calcDeltas2 seqDelta ((seqDelta) :: deltas)
+
+let makeResult2 sequence =
+  calcDeltas2 sequence [sequence]
+
+let seqResults2 =
+  sequences
+  |> List.map (fun s -> makeResult2 s)
+
+let getExpandValue2 prevValue delta =
+  List.head delta - prevValue
+
+let rec expand2 deltas prevValue =
+  if deltas = [] then
+    prevValue
+  else
+    let newValue = getExpandValue2 prevValue deltas.Head
+    expand2 deltas.Tail newValue
+
+let expandSum2 =
+  seqResults2
+  |> List.map (fun d -> expand2 d 0)
+  |> List.sum
+
+printf "Expand Sum 2: %A\r\n" expandSum2
