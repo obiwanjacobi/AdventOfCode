@@ -1,4 +1,4 @@
-﻿// https://adventofcode.com/2023/day/0
+﻿// https://adventofcode.com/2023/day/7
 
 //let lines = System.IO.File.ReadLines "sample.txt"
 let lines = System.IO.File.ReadLines "input.txt"
