@@ -1,8 +1,8 @@
 ﻿// https://adventofcode.com/2023/day/5
 open System
 
-let lines = System.IO.File.ReadLines "sample.txt"
-//let lines = System.IO.File.ReadLines "input.txt"
+//let lines = System.IO.File.ReadLines "sample.txt"
+let lines = System.IO.File.ReadLines "input.txt"
 
 // input parsing
 
@@ -89,9 +89,11 @@ printf "Lowest location 1: %A\r\n" minLocation1
 // --------------------------------------------------------
 // part2
 
+let one = int64(1)
+
 let rec toRange list = 
   match list with
-  | (x: int64)::(y: int64)::rest -> { Start = x; End = x + y}:: toRange rest
+  | (x: int64)::(y: int64)::rest -> { Start = x; End = x + y - one }:: toRange rest
   | _ -> []
 
 let seedsRanges = 
@@ -102,33 +104,62 @@ let seedsRanges =
 //printf "%A" seedsRanges
 
 let intersectRange srcRng1 srcRng2 = 
-  srcRng1.End >= srcRng2.Start && srcRng1.Start < srcRng2.End
+  srcRng1.End >= srcRng2.Start && srcRng1.Start <= srcRng2.End
+
+let subtractRange rng1 rng2 =
+  if rng1.Start < rng2.Start && rng1.End > rng2.End then
+    // |-----rng1----|
+    //     |-rng2-|
+    // |low|      |hi|
+    let low = { Start = rng1.Start; End = rng2.Start - one }
+    let hi = { Start = rng2.End + one; End = rng1.End }
+    [low; hi]
+  elif rng1.Start < rng2.Start && rng1.End <= rng2.End then
+    // |-rng1-|
+    //    |-rng2-|
+    // |--|
+    [{ Start = rng1.Start; End = rng2.Start - one}]
+  elif rng1.Start > rng2.Start && rng1.End > rng2.End then
+    //     |-rng1-|
+    // |-rng2-|
+    //        |---|
+    [{ Start = rng2.End + one; End = rng1.End - one}]
+  else
+    []
+
+let subtractRanges rngList rng =
+  rngList 
+  |> List.collect (fun r -> subtractRange rng r)
+  
+let translateEntry (mapEntry: MapEntry) srcRng =
+  let startRng = max srcRng.Start mapEntry.Source.Start 
+  let endRng = min srcRng.End mapEntry.Source.End
+  let startOffset = Math.Abs(mapEntry.Source.Start - startRng)
+  let endOffset = Math.Abs(mapEntry.Source.End - endRng)
+  { Start = mapEntry.Destination.Start + startOffset; End = mapEntry.Destination.End - endOffset }
 
 let translateIntersect srcRng map =
+  // do srcRng match entry ranges?
   let entries = map.Entries |> List.filter (fun e -> intersectRange srcRng e.Source)
-  if List.length entries = 0 then
-    [srcRng]  // unmapped values pass thru
+  if entries.Length = 0 then
+    [srcRng]
   else
-    entries
-    |> List.map (fun e ->
-      let startRng = max srcRng.Start e.Source.Start 
-      let endRng = min srcRng.End e.Source.End
-      let startOffset = Math.Abs(e.Source.Start - startRng)
-      let endOffset = Math.Abs(e.Source.End - endRng)
-      { Start = e.Destination.Start + startOffset; End = e.Destination.End - endOffset }
-    )
+    // do srcRng not match entry ranges (what's left)?
+    let thruRngs = subtractRanges (entries |> List.map(fun e -> e.Source)) srcRng
+    let ranges = entries |> List.map (fun entry -> translateEntry entry srcRng)
+    ranges |> List.append thruRngs
 
 
 let rec intersectMap srcRng index maps =
   if index >= List.length maps then
     [srcRng]
   else
-    translateIntersect srcRng maps.[index]
-    |> List.collect (fun rng -> maps |> intersectMap rng (index + 1) )
+    let dstRng = translateIntersect srcRng maps.[index]
+    dstRng |> List.collect (fun rng -> maps |> intersectMap rng (index + 1) )
 
 let minLocation2 =
   seedsRanges
   |> List.collect (fun r -> intersectMap r 0 maps)
   |> List.minBy (fun r -> r.Start)
   
-printf "Lowest location 2: %A\r\n" minLocation2
+printf "Lowest location 2: %A\r\n" minLocation2.Start
