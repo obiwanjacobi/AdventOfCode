@@ -6,7 +6,7 @@ input_path = root / "input.txt"
 
 ranges = []
 with input_path.open("r") as f:
-    ranges = map(lambda r: r.split("-"), f.read().split(","))
+    ranges = list(map(lambda r: r.split("-"), f.read().split(",")))
 
 invalidIds = []
 
@@ -30,8 +30,29 @@ for r in ranges:
         if strX[:lHalf] == strX[lHalf:]:
             invalidIds.append(x)
 
-print(invalidIds)
+#print(invalidIds)
 print(f"Sum1: {sum(invalidIds)}")
 
 # 5398419734 too low
 # 5398419778 correct
+
+invalidIds.clear()
+
+for r in ranges:
+    start = int(r[0])
+    end = int(r[1])
+
+    for x in range(start, end + 1):
+        strX = str(x)
+        length = len(strX)
+        lEnd = int((length + 2) / 2)
+
+        for l in range(1, lEnd):
+            parts = [strX[i:i+l] for i in range(0, length, l)]
+            #print(f"{strX}: {parts}")
+            if all(p == parts[0] for p in parts):
+                invalidIds.append(x)
+                break
+
+print(invalidIds)
+print(f"Sum2: {sum(invalidIds)}")
