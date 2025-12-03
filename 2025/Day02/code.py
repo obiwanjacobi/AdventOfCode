@@ -15,7 +15,7 @@ for r in ranges:
     lEnd = len(r[1])
     
     if lStart == lEnd and lStart % 2 != 0:
-        print ()
+        #print ()
         continue
 
     start = int(r[0])
@@ -54,5 +54,5 @@ for r in ranges:
                 invalidIds.append(x)
                 break
 
-print(invalidIds)
+#print(invalidIds)
 print(f"Sum2: {sum(invalidIds)}")
