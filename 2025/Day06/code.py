@@ -34,11 +34,7 @@ print(f"Total1: {total1}")
 
 grid2 = []
 col = []
-startMarker = 0 # use operator as start marker of col
 for o in range(0, len(lines[-1])):
-    if lines[-1][o] != ' ':     # operator
-        startMarker = o
-    
     str = ''
     for l in range(0, len(lines) - 1):
         str += lines[l][o]
